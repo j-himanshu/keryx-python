@@ -9,4 +9,3 @@ def magic(audioFileName):
         byte = frame[0]
         char = chr(byte)
         asci = ord(char)
-
