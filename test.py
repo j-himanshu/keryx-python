@@ -4,7 +4,7 @@ projectDirectory = "/home/hs/PycharmProjects/keryx-python/"
 secretFile = projectDirectory + "secret.txt"
 audioInputFile = projectDirectory + "audioInput.wav"
 audioOutputFile = projectDirectory + "audioOutput.wav"
-EOF = [1, 1, 1, 1, 1, 1, 1, 1]
+EOF = ['1', '1', '1', '1', '1', '1', '1', '1']
 
 def magic(secret, audioFileName):
     #open input file - read mode
@@ -25,8 +25,9 @@ def magic(secret, audioFileName):
     newFrames = oldFrames
     #initialise iterator for data bits
     i, length = 0, len(secret)
+    #append the modified frames
     for frame in oldFrames:
-        if i >= len(secret) or secret[i] == 0:
+        if i >= len(secret) or secret[i] == '0':
             newFrames = newFrames + frame[0]
         else:
             byte = frame[0]
@@ -40,10 +41,36 @@ def magic(secret, audioFileName):
     audioOutput.close()
     audioInput.close()
 
+def getAsciText(bitArray):
+    text = ""
+    while True:
+        byte = bitArray[0:8]
+        asci = int(str(byte).replace("[", "").replace("]", "").replace(",", "").replace(" ", ""), 2)
+        if asci == 255:
+            break
+        text = text + chr(asci)
+        bitArray = bitArray[8:]
+    return text
+
+def blackMagic(stegFile):
+    audio = wave.open(stegFile, "r")
+    props = audio.getparams()
+    originalFrames = audio.readframes(props[3]/2)
+    modifiedFrames = audio.readframes(props[3]/2)
+    audio.close()
+    bitArray = []
+    for i in range(len(originalFrames)):
+        if originalFrames[i] != modifiedFrames[i]:
+            bitArray.append(1)
+        else:
+            bitArray.append(0)
+    secretMessage = getAsciText(bitArray)
+    return secretMessage
+
 def getBlockBits(asci):
     asciVal = ord(asci)
     binary = bin(asciVal)[2:]
-    block = [0]*(8-len(binary)) + list(binary)
+    block = ['0']*(8-len(binary)) + list(binary)
     return block
 
 def getBit(file):
@@ -58,3 +85,5 @@ def getBit(file):
 if __name__ == "__main__":
     bitArray = getBit(secretFile)
     magic(bitArray, audioInputFile)
+    secretText = blackMagic(audioOutputFile)
+    print secretText
