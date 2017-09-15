@@ -6,8 +6,11 @@ os.system("sudo iptables -A PREROUTING -t nat -p tcp --dport 80 -j REDIRECT --to
 a = os.fork()
 if a == 0:
 	os.chdir("/home/ubuntu/keryx-react")
+	os.system("git pull origin master")
 	while True:
 		if "node /usr/local/bin/serve -s build" not in os.popen("ps -aux | grep node").read():
 			os.system("serve -s build &")
 else:
+	os.chdir("/home/ubuntu/keryx-python")
+	os.system("git pull origin master")
 	main()
