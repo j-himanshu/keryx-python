@@ -1,8 +1,13 @@
+from decryptModule import decryptMessage
+from encryptModule import sendMessage
+from keyModule import getKey
+
+
 def keyGenerateService(data):
-    return 1
+    return getKey(data)
 
 def messageService(data):
-    pass
+    return sendMessage(data)
 
 def decryptMessageService(data):
-    return "Decrypted message"
+    return decryptMessage(data)

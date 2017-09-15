@@ -71,6 +71,10 @@ def decryptMessageRest():
     except Exception, e:
         return {'status': False, 'message': str(e)}
 
+@get('/keryx/test')
+def test():
+    return "Success"
+
 ########################################################################################################################
 
 @route('/keryx/uploadKeyImage', method=['OPTIONS'])
@@ -94,6 +98,11 @@ def handleOption():
         return {}
 
 @route('/keryx/decryptMessage', method=['OPTIONS'])
+def handleOption():
+    if request.method == 'OPTIONS':
+        return {}
+
+@route('/keryx/test', method=['OPTIONS'])
 def handleOption():
     if request.method == 'OPTIONS':
         return {}
