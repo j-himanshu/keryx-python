@@ -1,6 +1,6 @@
 import os
 
-from constant import PROJECT_DIRECTORY
+from constant import PROJECT_DIRECTORY, getRandomFile
 from emailModule import sendMail
 
 KEY_FILE_IMAGE = PROJECT_DIRECTORY + "generated/image/key.jpg"
@@ -12,9 +12,8 @@ def keygen():
 
 def embedImage(publicKey):
     #embed publicKey in image - image stegnography
-    #INPUT IMAGE : RANDOM FROM : warehouse/image
+    baseImageFile = getRandomFile(KEY_IMAGE_WAREHOUSE)
     #OUTPUT IMAGE : "KEY_FILE_IMAGE"
-    pass
 
 def getKey(data):
     publicKey, privateKey = keygen()

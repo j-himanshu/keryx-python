@@ -1,0 +1,1 @@
+the generated key image files are stored in this directory

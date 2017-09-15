@@ -1,8 +1,7 @@
 import os
-import random
 import wave
 
-from constant import PROJECT_DIRECTORY
+from constant import PROJECT_DIRECTORY, getRandomFile
 from emailModule import sendMail
 
 INPUT_AUDIO_DIRECTORY = PROJECT_DIRECTORY + "warehouse/wav/"
@@ -44,8 +43,7 @@ def getBit(file):
 
 def audioStegnography(inputFile):
     inputBitmap = getBit(inputFile)
-    audioFile = os.listdir(INPUT_AUDIO_DIRECTORY)[int(random.random()*10**10) % len(os.listdir(INPUT_AUDIO_DIRECTORY))]
-    audioInputFile = INPUT_AUDIO_DIRECTORY + audioFile
+    audioInputFile = getRandomFile(INPUT_AUDIO_DIRECTORY)
     audioInput= wave.open(audioInputFile, "r")
     audioOutput = wave.open(AUDIO_OUTPUT_FILE, "w")
     props = audioInput.getparams()
