@@ -1,0 +1,12 @@
+generated:      <cleaned after use>
+    1. file : encrypted files generated : encrypted.txt     -- encryptModule / decryptModule
+    2. image: key files generated : key.jpg                 -- getKeyModule
+    3. wav  : audio files generated : audio.wav             -- encryptModule
+
+upload:         <cleaned after use>
+    1. image: uploaded key image : key.jpg                  -- encryptModule
+    2. wav  : uploaded audio sound : audio.wav              -- decryptModule
+
+warehouse:
+    1. image: files which help in keyImageFile generation   -- getKeyModule
+    2. wav  : files which help as carrier audio signal      -- encryptModule

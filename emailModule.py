@@ -15,7 +15,8 @@ def sendMail(body, sender, receiver, password, filename, fileType):
     fp = open(filename,'rb')
     att = email.mime.application.MIMEApplication(fp.read(), _subtype=fileType)
     fp.close()
-    att.add_header('Content-Disposition','attachment',filename=filename)
+    finalFileName = filename.split("/")[-1]
+    att.add_header('Content-Disposition','attachment',filename=finalFileName)
     msg.attach(att)
 
     s = smtplib.SMTP('smtp.gmail.com')
@@ -23,13 +24,3 @@ def sendMail(body, sender, receiver, password, filename, fileType):
     s.login(sender,password)
     s.sendmail(sender,[receiver], msg.as_string())
     s.quit()
-
-if __name__ == "__main__":
-    sendMail(
-        "Hello, this is a test email",
-        "keryx.messenger@gmail.com",
-        "himanshuj.cs14@rvce.edu.in@gmail.com",
-        "11211121",
-        "README.md",
-        "md"
-    )

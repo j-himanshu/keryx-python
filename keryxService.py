@@ -1,6 +1,6 @@
 from decryptModule import decryptMessage
 from encryptModule import sendMessage
-from keyModule import getKey
+from getKeyModule import getKey
 
 
 def keyGenerateService(data):

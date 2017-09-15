@@ -1,9 +1,9 @@
 from bottle import *
 
+from directory import PROJECT_DIRECTORY
 from keryxService import *
 
-IMAGE_PATH = "/home/hs/PycharmProjects/keryx-python/upload/image/"
-AUDIO_PATH = "/home/hs/PycharmProjects/keryx-python/upload/wav/"
+PROJECT_UPLOAD_DIRECTORY = PROJECT_DIRECTORY + "upload/"
 
 ########################################################################################################################
 
@@ -22,10 +22,7 @@ def uploadKey():
         name, ext = os.path.splitext(upload.filename)
         if ext not in ('.png', '.jpg', '.jpeg'):
             return "File extension not allowed - USE .png .jpg .jpeg"
-        if not os.path.exists(IMAGE_PATH):
-            os.makedirs(IMAGE_PATH)
-        file_path = "{path}/{file}".format(path=IMAGE_PATH, file=upload.filename)
-        upload.save(file_path)
+        upload.save(PROJECT_UPLOAD_DIRECTORY + "image/key.jpg")
         return "Key Uploaded"
     except Exception, e:
         return str(e)
@@ -37,10 +34,7 @@ def uploadWav():
         name, ext = os.path.splitext(upload.filename)
         if ext != '.wav':
             return "File extension not allowed - USE .wav"
-        if not os.path.exists(AUDIO_PATH):
-            os.makedirs(AUDIO_PATH)
-        file_path = "{path}/{file}".format(path=AUDIO_PATH, file=upload.filename)
-        upload.save(file_path)
+        upload.save(PROJECT_UPLOAD_DIRECTORY+"wav/audio.wav")
         return "Key Uploaded"
     except Exception, e:
         return str(e)
