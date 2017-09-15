@@ -1,6 +1,6 @@
 from bottle import *
 
-from directory import PROJECT_DIRECTORY
+from constant import *
 from keryxService import *
 
 PROJECT_UPLOAD_DIRECTORY = PROJECT_DIRECTORY + "upload/"
@@ -103,6 +103,6 @@ def handleOption():
 
 ########################################################################################################################
 def main():
-    run(host='localhost', port=5001)
+    run(host = HOST, port = PORT)
 if __name__ == "__main__":
     main()

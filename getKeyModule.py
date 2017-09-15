@@ -1,6 +1,6 @@
 import os
 
-from directory import PROJECT_DIRECTORY
+from constant import PROJECT_DIRECTORY
 from emailModule import sendMail
 
 KEY_FILE_IMAGE = PROJECT_DIRECTORY + "generated/image/key.jpg"

@@ -1,7 +1,7 @@
 import os
 import wave
 
-from directory import PROJECT_DIRECTORY
+from constant import PROJECT_DIRECTORY
 
 ENCRYPTED_FILE = PROJECT_DIRECTORY + "generated/file/encrypted.txt"
 UPLOADED_WAV_AUDIO = PROJECT_DIRECTORY + "upload/wav/audio.wav"

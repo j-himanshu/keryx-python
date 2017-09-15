@@ -1,1 +1,0 @@
-PROJECT_DIRECTORY = "/home/hs/PycharmProjects/keryx-python/"
