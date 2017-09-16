@@ -13,16 +13,17 @@ def keygen():
 def embedImage(publicKey):
     #embed publicKey in image - image stegnography
     baseImageFile = getRandomFile(KEY_IMAGE_WAREHOUSE)
+    os.system("cp %s %s" % (baseImageFile, KEY_FILE_IMAGE))
     #OUTPUT IMAGE : "KEY_FILE_IMAGE"
 
 def getKey(data):
     publicKey, privateKey = keygen()
     embedImage(publicKey)
     sendMail(
-        data['plainText'],
+        data['plainMessage'],
         data['senderEmail'],
         data['receiverEmail'],
-        data['senderPassword'],
+        data['passkey'],
         KEY_FILE_IMAGE, 'jpg')
     os.remove(KEY_FILE_IMAGE)
     return privateKey

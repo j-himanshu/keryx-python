@@ -20,8 +20,8 @@ def uploadKey():
     try:
         upload = request.files.get('file')
         name, ext = os.path.splitext(upload.filename)
-        if ext not in ('.png', '.jpg', '.jpeg'):
-            return "File extension not allowed - USE .png .jpg .jpeg"
+        if ext != '.jpg':
+            return "File extension not allowed - USE.jpg"
         upload.save(PROJECT_UPLOAD_DIRECTORY + "image/key.jpg")
         return "Key Uploaded"
     except Exception, e:
@@ -45,7 +45,7 @@ def uploadWav():
 def generateKeyRest():
     try:
         publicKey = keyGenerateService(request.json)
-        return {'status' : True, 'key' : publicKey}
+        return {'status' : True, 'publicKey' : publicKey}
     except Exception, e:
         return {'status': False, 'message': str(e)}
 

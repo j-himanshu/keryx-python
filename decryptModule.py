@@ -12,7 +12,9 @@ def eccDecryption(privateKey):
     #read "ENCRYPTED_FILE"
     #decrypt the content using the private key
     #read the secret message
-    return "secret message"
+    with open(ENCRYPTED_FILE, "r") as encryptedFile:
+        secretText = encryptedFile.read()
+    return secretText
 
 ########################################################################################################################
 

@@ -1,9 +1,11 @@
 import email
 import email.mime.application
+import os
 import smtplib
 
 
 def sendMail(body, sender, receiver, password, filename, fileType):
+    body = str(body)
     msg = email.mime.Multipart.MIMEMultipart()
     msg['Subject'] = 'Greetings'
     msg['From'] = sender
@@ -15,7 +17,7 @@ def sendMail(body, sender, receiver, password, filename, fileType):
     fp = open(filename,'rb')
     att = email.mime.application.MIMEApplication(fp.read(), _subtype=fileType)
     fp.close()
-    finalFileName = filename.split("/")[-1]
+    finalFileName = "attachment" + os.path.splitext(filename)[1]
     att.add_header('Content-Disposition','attachment',filename=finalFileName)
     msg.attach(att)
 

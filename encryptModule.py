@@ -7,7 +7,7 @@ from emailModule import sendMail
 INPUT_AUDIO_DIRECTORY = PROJECT_DIRECTORY + "warehouse/wav/"
 ENCRYPTED_FILE = PROJECT_DIRECTORY + "generated/file/encrypted.txt"
 AUDIO_OUTPUT_FILE = PROJECT_DIRECTORY + "generated/wav/audio.wav"
-UPLOADED_KEY_IMAGE_FILE = PROJECT_DIRECTORY + "upload/wav/key.jpg"
+UPLOADED_KEY_IMAGE_FILE = PROJECT_DIRECTORY + "upload/image/key.jpg"
 EOF = ['1', '1', '1', '1', '1', '1', '1', '1']
 
 ########################################################################################################################
@@ -22,7 +22,8 @@ def eccEncryption(secretData, key):
     # from data, get secret message
     # apply ECC algorithm, and message encrypt using key
     # store the resultant encrypted file, in : "ENCRYPTED_FILE"
-    pass
+    with open(ENCRYPTED_FILE, "w") as encryptedFile:
+        encryptedFile.write(secretData)
 
 ########################################################################################################################
 
@@ -72,13 +73,13 @@ def audioStegnography(inputFile):
 
 def sendMessage(data):
     publicKey = getKey()
-    eccEncryption(data['secretText'], publicKey)
+    eccEncryption(str(data['secretMessage']), publicKey)
     audioStegnography(ENCRYPTED_FILE)
     sendMail(
-        data['plainText'],
+        data['plainMessage'],
         data['senderEmail'],
         data['receiverEmail'],
-        data['senderPassword'],
+        data['passkey'],
         AUDIO_OUTPUT_FILE, 'wav')
     os.remove(UPLOADED_KEY_IMAGE_FILE)
     os.remove(ENCRYPTED_FILE)
