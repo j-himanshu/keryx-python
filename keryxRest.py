@@ -35,7 +35,7 @@ def uploadWav():
         if ext != '.wav':
             return "File extension not allowed - USE .wav"
         upload.save(PROJECT_UPLOAD_DIRECTORY+"wav/audio.wav")
-        return "Key Uploaded"
+        return "Audio Uploaded"
     except Exception, e:
         return str(e)
 
