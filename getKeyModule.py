@@ -1,5 +1,7 @@
 import os
 
+from steganography.steganography import Steganography
+
 from constant import PROJECT_DIRECTORY, getRandomFile
 from emailModule import sendMail
 
@@ -11,10 +13,8 @@ def keygen():
     return (12345678, 87654321)
 
 def embedImage(publicKey):
-    #embed publicKey in image - image stegnography
     baseImageFile = getRandomFile(KEY_IMAGE_WAREHOUSE)
-    os.system("cp %s %s" % (baseImageFile, KEY_FILE_IMAGE))
-    #OUTPUT IMAGE : "KEY_FILE_IMAGE"
+    Steganography.encode(baseImageFile, KEY_FILE_IMAGE, publicKey)
 
 def getKey(data):
     publicKey, privateKey = keygen()

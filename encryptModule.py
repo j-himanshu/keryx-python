@@ -1,6 +1,8 @@
 import os
 import wave
 
+from steganography.steganography import Steganography
+
 from constant import PROJECT_DIRECTORY, getRandomFile
 from emailModule import sendMail
 
@@ -13,10 +15,7 @@ EOF = ['1', '1', '1', '1', '1', '1', '1', '1']
 ########################################################################################################################
 
 def getKey():
-    # check for uploaded image file : "UPLOADED_KEY_IMAGE_FILE"
-    # do image steganalysis and get public key
-    return 12345678
-
+    return Steganography.decode(UPLOADED_KEY_IMAGE_FILE)
 
 def eccEncryption(secretData, key):
     # from data, get secret message
