@@ -1,7 +1,7 @@
 import os
 import random
 
-PROJECT_DIRECTORY = "/Users/hs/PycharmProjects/keryx-python/"
+PROJECT_DIRECTORY = "/home/ubuntu/keryx-python/"
 HOST = ""
 PORT = "8080"
 
