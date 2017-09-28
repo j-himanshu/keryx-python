@@ -1,9 +1,9 @@
 import os
 import random
 
-PROJECT_DIRECTORY = "/home/ubuntu/keryx-python/"
+PROJECT_DIRECTORY = "/Users/hs/PycharmProjects/keryx-python/"
 HOST = ""
-PORT = "5001"
+PORT = "8080"
 
 def getRandomFile(path):
     files = os.listdir(path)

@@ -14,7 +14,7 @@ def keygen():
 
 def embedImage(publicKey):
     baseImageFile = getRandomFile(KEY_IMAGE_WAREHOUSE)
-    Steganography.encode(baseImageFile, KEY_FILE_IMAGE, publicKey)
+    Steganography.encode(baseImageFile, KEY_FILE_IMAGE, str(publicKey))
 
 def getKey(data):
     publicKey, privateKey = keygen()
