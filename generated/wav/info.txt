@@ -1,1 +1,0 @@
-the generated audio steg files are stored in this directory

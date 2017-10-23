@@ -1,1 +1,0 @@
-The generated encrypted files are stored in this directory
