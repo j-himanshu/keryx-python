@@ -1,13 +1,13 @@
 from decryptModule import decryptMessage
-from encryptModule import sendMessage
+from encryptModule import generateWave
 from getKeyModule import getKey
 
 
-def keyGenerateService(data):
-    return getKey(data)
+def keyGenerateService():
+    getKey()
 
-def messageService(data):
-    return sendMessage(data)
+def audioGenerateService():
+    generateWave()
 
-def decryptMessageService(data):
-    return decryptMessage(data)
+def imageGenerateService():
+    decryptMessage()

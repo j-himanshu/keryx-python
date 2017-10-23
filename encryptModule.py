@@ -1,35 +1,20 @@
-import os
 import wave
-
-from steganography.steganography import Steganography
-
-from constant import PROJECT_DIRECTORY, getRandomFile
-from emailModule import sendMail
-
-INPUT_AUDIO_DIRECTORY = PROJECT_DIRECTORY + "warehouse/wav/"
-ENCRYPTED_FILE = PROJECT_DIRECTORY + "generated/file/encrypted.txt"
-AUDIO_OUTPUT_FILE = PROJECT_DIRECTORY + "generated/wav/audio.wav"
-UPLOADED_KEY_IMAGE_FILE = PROJECT_DIRECTORY + "upload/image/key.jpg"
-EOF = ['1', '1', '1', '1', '1', '1', '1', '1']
+from constant import *
 
 ########################################################################################################################
 
-def getKey():
-    return Steganography.decode(UPLOADED_KEY_IMAGE_FILE)
-
-def eccEncryption(secretData, key):
-    # from data, get secret message
-    # apply ECC algorithm, and message encrypt using key
-    # store the resultant encrypted file, in : "ENCRYPTED_FILE"
-    with open(ENCRYPTED_FILE, "w") as encryptedFile:
-        encryptedFile.write(secretData)
+def eccEncryption():
+    os.chdir(JAVA_SOURCE_DIRECTORY)
+    os.system("java -cp \"%s*:./\" %s %s %s %s" % (JAR_DIRECTORY, JAVA_ENCRYPTION_CLASS, PUBLIC_KEY_UPLOADED, INFORMATION_IMAGE_UPLOADED, ENCRYPTED_IMAGE_TXT))
+    os.chdir(PROJECT_DIRECTORY)
 
 ########################################################################################################################
 
 def getBlockBits(asci):
-    asciVal = ord(asci)
-    binary = bin(asciVal)[2:]
-    block = ['0']*(8-len(binary)) + list(binary)
+    num, block = ord(asci), []
+    for i in range(7, -1, -1):
+        block.append(str(int(num/ 2**i)))
+        num = num % 2**i
     return block
 
 def getBit(file):
@@ -41,12 +26,16 @@ def getBit(file):
         bits = bits + bitBlock
     return bits + EOF
 
-def audioStegnography(inputFile):
-    inputBitmap = getBit(inputFile)
-    audioInputFile = getRandomFile(INPUT_AUDIO_DIRECTORY)
-    audioInput= wave.open(audioInputFile, "r")
-    audioOutput = wave.open(AUDIO_OUTPUT_FILE, "w")
-    props = audioInput.getparams()
+def audioStegnography():
+    inputBitmap = getBit(ENCRYPTED_IMAGE_TXT)
+    minSizeRequired = len(inputBitmap)
+    while True:
+        audioInputFile = getRandomFile(INPUT_AUDIO_DIRECTORY)
+        audioInput= wave.open(audioInputFile, "r")
+        audioOutput = wave.open(AUDIO_FILE, "w")
+        props = audioInput.getparams()
+        if minSizeRequired < props[3]:
+            break
     audioOutput.setparams(props)
     audioOutput.setnframes(2 * props[3])
     oldFrames = audioInput.readframes(props[3])
@@ -56,7 +45,11 @@ def audioStegnography(inputFile):
     for frame in oldFrames:
         if i >= len(inputBitmap) or inputBitmap[i] == '0':
             newFrames = newFrames + frame[0]
+            #i >= len(inputBitmap) : when the input is completely embedded, append the rest of audio bits
+            #without any modification
+            #if the data bit to be embedded is 0, apped frame as it is without any modification
         else:
+            #if the data bit to be embedded is 1, either increase or decrease the slope of frame by 1
             byte = frame[0]
             asci = ord(byte)
             if asci >= 128:
@@ -70,16 +63,9 @@ def audioStegnography(inputFile):
 
 ########################################################################################################################
 
-def sendMessage(data):
-    publicKey = getKey()
-    eccEncryption(str(data['secretMessage']), publicKey)
-    audioStegnography(ENCRYPTED_FILE)
-    sendMail(
-        data['plainMessage'],
-        data['senderEmail'],
-        data['receiverEmail'],
-        data['passkey'],
-        AUDIO_OUTPUT_FILE, 'wav')
-    os.remove(UPLOADED_KEY_IMAGE_FILE)
-    os.remove(ENCRYPTED_FILE)
-    os.remove(AUDIO_OUTPUT_FILE)
+def generateWave():
+    print datetime.now(), "CALLING ENCRYPTION"
+    eccEncryption()
+    print datetime.now(), "encryption finished | CALLING STEGANOGRAPHY"
+    audioStegnography()
+    print datetime.now(), "steganography finished"

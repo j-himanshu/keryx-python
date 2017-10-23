@@ -1,55 +1,44 @@
-import os
 import wave
-
-from constant import PROJECT_DIRECTORY
-
-ENCRYPTED_FILE = PROJECT_DIRECTORY + "generated/file/encrypted.txt"
-UPLOADED_WAV_AUDIO = PROJECT_DIRECTORY + "upload/wav/audio.wav"
+from constant import *
 
 ########################################################################################################################
 
-def eccDecryption(privateKey):
-    #read "ENCRYPTED_FILE"
-    #decrypt the content using the private key
-    #read the secret message
-    with open(ENCRYPTED_FILE, "r") as encryptedFile:
-        secretText = encryptedFile.read()
-    return secretText
+def eccDecryption():
+    os.chdir(JAVA_SOURCE_DIRECTORY)
+    os.system("java -cp \"%s*:./\" %s %s %s %s" %
+              (JAR_DIRECTORY, JAVA_DECRYPTION_CLASS, PRIVATE_KEY_UPLOADED, ENCRYPTED_IMAGE_TXT, INFORMATION_IMAGE))
+    os.chdir(PROJECT_DIRECTORY)
 
 ########################################################################################################################
-
-def getAsciText(bitArray):
-    text = ""
-    while True:
-        byte = bitArray[0:8]
-        asci = int(str(byte).replace("[", "").replace("]", "").replace(",", "").replace(" ", ""), 2)
-        if asci == 255:
-            break
-        text = text + chr(asci)
-        bitArray = bitArray[8:]
-    return text
 
 def stegAnalysis():
-    audio = wave.open(UPLOADED_WAV_AUDIO, "r")
+    audio = wave.open(AUDIO_FILE_UPLOADED, "r")
     props = audio.getparams()
     originalFrames = audio.readframes(props[3]/2)
     modifiedFrames = audio.readframes(props[3]/2)
     audio.close()
-    bitArray = []
-    for i in range(len(originalFrames)):
-        if originalFrames[i] != modifiedFrames[i]:
-            bitArray.append(1)
-        else:
-            bitArray.append(0)
-    information = getAsciText(bitArray)
-    with open(ENCRYPTED_FILE, "w") as output:
-        output.write(information)
+    text, previous, byte = "", 0, 0
+    for i in range(len(originalFrames) / 8):
+        prior = previous
+        previous = byte
+        byte = 0
+        for j in range (8):
+            index = 8 * i + j
+            byte = byte * 2
+            if originalFrames[index] != modifiedFrames[index]:
+                byte = byte + 1
+        if prior == 204 and previous == 51 and byte == 240:
+            break
+        text = text + chr(byte)
+    text = text[0:-2]
+    with open(ENCRYPTED_IMAGE_TXT, "w") as output:
+        output.write(text)
 
 ########################################################################################################################
 
-def decryptMessage(data):
+def decryptMessage():
+    print datetime.now(), "CALLING STEGANALYSIS"
     stegAnalysis()
-    secret = eccDecryption(data['passkey'])
-    os.remove(UPLOADED_WAV_AUDIO)
-    os.remove(ENCRYPTED_FILE)
-    return secret
+    print datetime.now(), "steganalysis finished | CALLING ECC DECRYPTION"
+    eccDecryption()
+    print datetime.now(), "decryption finished"

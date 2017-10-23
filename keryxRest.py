@@ -1,9 +1,7 @@
 from bottle import *
-
 from constant import *
 from keryxService import *
 
-PROJECT_UPLOAD_DIRECTORY = PROJECT_DIRECTORY + "upload/"
 
 ########################################################################################################################
 
@@ -15,88 +13,127 @@ def enable_cors():
 
 ########################################################################################################################
 
-@route('/keryx/uploadKeyImage', method='POST')
-def uploadKey():
+@route('/keryx/uploadPublicKey', method='POST')
+def uploadPublicKey():
+    print datetime.now(), "PUBLIC KEY UPLOAD"
     try:
         upload = request.files.get('file')
         name, ext = os.path.splitext(upload.filename)
-        if ext != '.jpg':
-            return "File extension not allowed - USE.jpg"
-        upload.save(PROJECT_UPLOAD_DIRECTORY + "image/key.jpg")
-        return "Key Uploaded"
+        if ext != '':
+            return "Invalid File Extension for key"
+        upload.save(PUBLIC_KEY_UPLOADED)
+        return "Key Uploaded, we'll encrypt your Information Image shortly"
+    except Exception, e:
+        return str(e)
+
+@route('/keryx/uploadInformation', method='POST')
+def uploadInformation():
+    print datetime.now(), "INFORMATION UPLOAD"
+    try:
+        upload = request.files.get('file')
+        name, ext = os.path.splitext(upload.filename)
+        if ext not in ['.jpg', '.jpeg']:
+            return "File extension not allowed - USE .jpg, .jpeg"
+        upload.save(INFORMATION_IMAGE_UPLOADED)
+        return "Your Information Image has been uploaded and is being processed."
+    except Exception, e:
+        return str(e)
+
+@route('/keryx/uploadPrivateKey', method='POST')
+def uploadPrivateKey():
+    print datetime.now(), "PRIVATE KEY UPLOAD"
+    try:
+        upload = request.files.get('file')
+        name, ext = os.path.splitext(upload.filename)
+        if ext != '':
+            return "Invalid File Extension for key"
+        upload.save(PRIVATE_KEY_UPLOADED)
+        return "Key Uploaded, we'll decrypt your Information Image shortly"
     except Exception, e:
         return str(e)
 
 @route('/keryx/uploadAudioFile', method='POST')
 def uploadWav():
+    print datetime.now(), "AUDIO UPLOAD"
     try:
         upload = request.files.get('file')
         name, ext = os.path.splitext(upload.filename)
         if ext != '.wav':
             return "File extension not allowed - USE .wav"
-        upload.save(PROJECT_UPLOAD_DIRECTORY+"wav/audio.wav")
-        return "Audio Uploaded"
+        upload.save(AUDIO_FILE_UPLOADED)
+        return "Audio Uploaded, sit back and relax while we process your audio."
     except Exception, e:
         return str(e)
 
 ########################################################################################################################
 
-@post('/keryx/generateKey')
-def generateKeyRest():
+@route('/keryx/downloadKey')
+def keyDownload():
     try:
-        publicKey = keyGenerateService(request.json)
-        return {'status' : True, 'publicKey' : publicKey}
+        print datetime.now(), "KEY DOWNLOAD SERVICE"
+        keyGenerateService()
+        return static_file("key.zip", PROJECT_DIRECTORY + "generated/key/")
     except Exception, e:
-        return {'status': False, 'message': str(e)}
+        return str(e)
 
-@post('/keryx/sendMessage')
-def sendMessageRest():
+@route('/keryx/downloadAudio')
+def audioDownload():
     try:
-        messageService(request.json)
-        return {'status': True, 'message': "Message has been sent"}
+        print datetime.now(), "WAVE DOWNLOAD SERVICE"
+        audioGenerateService()
+        return static_file("audio.wav", PROJECT_DIRECTORY + "generated/wav/")
     except Exception, e:
-        return {'status': False, 'message': str(e)}
+        return str(e)
 
-@post('/keryx/decryptMessage')
-def decryptMessageRest():
+@route('/keryx/downloadImage')
+def imageDownload():
     try:
-        message = decryptMessageService(request.json)
-        return {'status': True, 'message': message}
+        print datetime.now(), "IMAGE DOWNLOAD SERVICE"
+        imageGenerateService()
+        return static_file("image.jpg", PROJECT_DIRECTORY + "generated/image/")
     except Exception, e:
-        return {'status': False, 'message': str(e)}
-
-@get('/keryx/test')
-def test():
-    return "Success"
+        return str(e)
 
 ########################################################################################################################
 
-@route('/keryx/uploadKeyImage', method=['OPTIONS'])
+@get('/keryx/cleanup')
+def cleanup():
+    directories = [PROJECT_DIRECTORY + "generated/key/",
+               PROJECT_DIRECTORY + "generated/image/",
+               PROJECT_DIRECTORY + "generated/wav/",
+               PROJECT_DIRECTORY + "generated/txt/",
+               PROJECT_DIRECTORY + "upload/key/",
+               PROJECT_DIRECTORY + "upload/image/",
+               PROJECT_DIRECTORY + "upload/wav/"]
+    for eachDirectory in directories:
+        os.chdir(eachDirectory)
+        os.system("rm *")
+
+    return "SUCCESSFUL ROUTINE CLEANUP"
+
+########################################################################################################################
+
+@route('/keryx/uploadPublicKey', method=['OPTIONS'])
 def handleOption():
     if request.method == 'OPTIONS':
-        return {}\
+        return {}
 
 @route('/keryx/uploadAudioFile', method=['OPTIONS'])
 def handleOption():
     if request.method == 'OPTIONS':
         return {}
 
-@route('/keryx/generateKey', method=['OPTIONS'])
+@route('/keryx/uploadInformation', method=['OPTIONS'])
 def handleOption():
     if request.method == 'OPTIONS':
         return {}
 
-@route('/keryx/sendMessage', method=['OPTIONS'])
+@route('/keryx/uploadPrivateKey', method=['OPTIONS'])
 def handleOption():
     if request.method == 'OPTIONS':
         return {}
 
-@route('/keryx/decryptMessage', method=['OPTIONS'])
-def handleOption():
-    if request.method == 'OPTIONS':
-        return {}
-
-@route('/keryx/test', method=['OPTIONS'])
+@route('/keryx/cleanup', method=['OPTIONS'])
 def handleOption():
     if request.method == 'OPTIONS':
         return {}
@@ -104,5 +141,6 @@ def handleOption():
 ########################################################################################################################
 def main():
     run(host = HOST, port = PORT)
+
 if __name__ == "__main__":
     main()
