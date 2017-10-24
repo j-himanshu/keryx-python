@@ -41,6 +41,7 @@ def audioStegnography():
     audioInput.rewind()
     newFrames = oldFrames
     tempFrames = ""
+
     for eachByte in byteArray:
         eightFrames, newFrames = newFrames[0:8], newFrames[8:]
         for i in range(8):
