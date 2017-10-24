@@ -10,53 +10,51 @@ def eccEncryption():
 
 ########################################################################################################################
 
-def getBlockBits(asci):
-    num, block = ord(asci), []
-    for i in range(7, -1, -1):
-        block.append(str(int(num/ 2**i)))
-        num = num % 2**i
-    return block
-
-def getBit(file):
-    bits = []
+def getBytes(file):
+    byte = []
     with open(file, "r") as myFile:
         text = myFile.read()
+        print datetime.now(), "ENCRYPT TXT FILE SIZE: ", len(text)
     for eachCharacter in text:
-        bitBlock = getBlockBits(eachCharacter)
-        bits = bits + bitBlock
-    return bits + EOF
+        byte.append(BINARY[ord(eachCharacter)])
+    byte = byte + EOF
+    return byte
 
 def audioStegnography():
-    inputBitmap = getBit(ENCRYPTED_IMAGE_TXT)
-    minSizeRequired = len(inputBitmap)
+    print datetime.now(), "AUDIO STEGANOGRAPHY STARTED"
+    byteArray = getBytes(ENCRYPTED_IMAGE_TXT)
+    noOfBits = len(byteArray) * 8
+    print datetime.now(), "NUMBER OF BITS: ", noOfBits
     while True:
         audioInputFile = getRandomFile(INPUT_AUDIO_DIRECTORY)
         audioInput= wave.open(audioInputFile, "r")
-        audioOutput = wave.open(AUDIO_FILE, "w")
         props = audioInput.getparams()
-        if minSizeRequired < props[3]:
+        print datetime.now(), "random : ", audioInputFile, " | capacity : ", props[3]
+        if noOfBits < props[3]:
+            print datetime.now(), "Audio base selected:", audioInputFile
             break
+        audioInput.close()
+    audioOutput = wave.open(AUDIO_FILE, "w")
     audioOutput.setparams(props)
     audioOutput.setnframes(2 * props[3])
     oldFrames = audioInput.readframes(props[3])
     audioInput.rewind()
     newFrames = oldFrames
-    i, length = 0, len(inputBitmap)
-    for frame in oldFrames:
-        if i >= len(inputBitmap) or inputBitmap[i] == '0':
-            newFrames = newFrames + frame[0]
-            #i >= len(inputBitmap) : when the input is completely embedded, append the rest of audio bits
-            #without any modification
-            #if the data bit to be embedded is 0, apped frame as it is without any modification
-        else:
-            #if the data bit to be embedded is 1, either increase or decrease the slope of frame by 1
-            byte = frame[0]
-            asci = ord(byte)
-            if asci >= 128:
-                newFrames = newFrames + (chr(asci - 1))
+    tempFrames = ""
+    for eachByte in byteArray:
+        eightFrames, newFrames = newFrames[0:8], newFrames[8:]
+        for i in range(8):
+            if eachByte[i] == 0:
+                tempFrames = tempFrames + eightFrames[i]
             else:
-                newFrames = newFrames + (chr(asci + 1))
-        i = i + 1
+                asci = ord(eightFrames[i])
+                if asci >= 128:
+                    tempFrames = tempFrames + chr(asci - 1)
+                else:
+                    tempFrames = tempFrames + chr(asci + 1)
+
+    newFrames = oldFrames + tempFrames + newFrames
+
     audioOutput.writeframes(newFrames)
     audioOutput.close()
     audioInput.close()

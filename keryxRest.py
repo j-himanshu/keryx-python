@@ -32,8 +32,8 @@ def uploadInformation():
     try:
         upload = request.files.get('file')
         name, ext = os.path.splitext(upload.filename)
-        if ext not in ['.jpg', '.jpeg']:
-            return "File extension not allowed - USE .jpg, .jpeg"
+        if ext != '.png':
+            return "File extension not allowed - USE .png"
         upload.save(INFORMATION_IMAGE_UPLOADED)
         return "Your Information Image has been uploaded and is being processed."
     except Exception, e:
@@ -66,7 +66,7 @@ def uploadWav():
         return str(e)
 
 ########################################################################################################################
-
+import time
 @route('/keryx/downloadKey')
 def keyDownload():
     try:
@@ -90,7 +90,7 @@ def imageDownload():
     try:
         print datetime.now(), "IMAGE DOWNLOAD SERVICE"
         imageGenerateService()
-        return static_file("image.jpg", PROJECT_DIRECTORY + "generated/image/")
+        return static_file("image.png", PROJECT_DIRECTORY + "generated/image/")
     except Exception, e:
         return str(e)
 
