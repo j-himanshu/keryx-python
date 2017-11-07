@@ -11,34 +11,37 @@ def eccDecryption():
 
 ########################################################################################################################
 
-def stegAnalysis():
-    audio = wave.open(AUDIO_FILE_UPLOADED, "r")
+def stegAnalysis(inputFile):
+    audio = wave.open(inputFile, "rb")
     props = audio.getparams()
-    originalFrames = audio.readframes(props[3]/2)
-    modifiedFrames = audio.readframes(props[3]/2)
+    originalFrames = audio.readframes(props[3] / 2)
+    modifiedFrames = audio.readframes(props[3] / 2)
     audio.close()
     text, previous, byte = "", 0, 0
     for i in range(len(originalFrames) / 8):
         prior = previous
         previous = byte
         byte = 0
-        for j in range (8):
+        for j in range(8):
             index = 8 * i + j
             byte = byte * 2
             if originalFrames[index] != modifiedFrames[index]:
                 byte = byte + 1
-        if prior == 204 and previous == 51 and byte == 240:
+        if prior == A and previous == B and byte == C:
             break
         text = text + chr(byte)
-    text = text[0:-2]
-    with open(ENCRYPTED_IMAGE_TXT, "w") as output:
+    # filename = ("outputFile" + text[0:8]).replace(' ', '')
+    text = text[8:-2]
+    # with open(filename, "w") as output:
+    #     output.write(text)
+    with open(ENCRYPTED_IMAGE_TXT, "wb") as output:
         output.write(text)
 
 ########################################################################################################################
 
 def decryptMessage():
     print datetime.now(), "CALLING STEGANALYSIS"
-    stegAnalysis()
+    stegAnalysis(AUDIO_FILE_UPLOADED)
     print datetime.now(), "steganalysis finished | CALLING ECC DECRYPTION"
     eccDecryption()
     print datetime.now(), "decryption finished"

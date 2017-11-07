@@ -76,12 +76,29 @@ def keyDownload():
     except Exception, e:
         return str(e)
 
+@route('/keryx/generateAudio')
+def audioGenerate():
+    try:
+        print datetime.now(), "WAVE GENERATE SERVICE"
+        audioGenerateService()
+        return static_file("audio.html", root=PROJECT_DIRECTORY)
+    except Exception, e:
+        return str(e)
+
 @route('/keryx/downloadAudio')
 def audioDownload():
     try:
         print datetime.now(), "WAVE DOWNLOAD SERVICE"
-        audioGenerateService()
         return static_file("audio.wav", PROJECT_DIRECTORY + "generated/wav/")
+    except Exception, e:
+        return str(e)
+
+@route('/keryx/generateImage')
+def audioGenerate():
+    try:
+        print datetime.now(), "IMAGE GENERATE SERVICE"
+        imageGenerateService()
+        return static_file("image.html", root=PROJECT_DIRECTORY)
     except Exception, e:
         return str(e)
 
@@ -89,7 +106,6 @@ def audioDownload():
 def imageDownload():
     try:
         print datetime.now(), "IMAGE DOWNLOAD SERVICE"
-        imageGenerateService()
         return static_file("image.png", PROJECT_DIRECTORY + "generated/image/")
     except Exception, e:
         return str(e)
@@ -110,6 +126,14 @@ def cleanup():
         os.system("rm *")
 
     return "SUCCESSFUL ROUTINE CLEANUP"
+
+@get('/keryx/viewLogs')
+def log():
+    os.chdir(HOME_DIRECTORY)
+    logger = os.popen("cat nohup.out", "r")
+    logs = logger.read()
+    logger.close()
+    return logs
 
 ########################################################################################################################
 
@@ -134,6 +158,11 @@ def handleOption():
         return {}
 
 @route('/keryx/cleanup', method=['OPTIONS'])
+def handleOption():
+    if request.method == 'OPTIONS':
+        return {}
+
+@route('/keryx/viewLogs', method=['OPTIONS'])
 def handleOption():
     if request.method == 'OPTIONS':
         return {}
