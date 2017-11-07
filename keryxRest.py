@@ -136,7 +136,7 @@ def log():
         logs = logger.read()
     os.chdir(PROJECT_DIRECTORY)
     with open("log.html", "w") as log:
-        log.write("<head><title>KERYX MESSAGING SYSTEM</title></head><body><h1>LOG FILES TILL %s</h1><br/><hr/><br/>" % (str(str(datetime.now()))))
+        log.write("<head><title>KERYX MESSAGING SYSTEM</title></head><body><h1>LOG FILES TILL %s</h1><br/><hr/><br/>" % (str(datetime.now())))
         allLogs = logs.split('\n')
         for eachLog in allLogs:
             log.write(eachLog + "<br/>")
