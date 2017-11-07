@@ -15,7 +15,7 @@ def enable_cors():
 
 @route('/keryx/uploadPublicKey', method='POST')
 def uploadPublicKey():
-    print datetime.now(), "PUBLIC KEY UPLOAD"
+    logging.warning( str(datetime.now())+" PUBLIC KEY UPLOAD")
     try:
         upload = request.files.get('file')
         name, ext = os.path.splitext(upload.filename)
@@ -28,7 +28,7 @@ def uploadPublicKey():
 
 @route('/keryx/uploadInformation', method='POST')
 def uploadInformation():
-    print datetime.now(), "INFORMATION UPLOAD"
+    logging.warning( str(datetime.now())+" INFORMATION UPLOAD")
     try:
         upload = request.files.get('file')
         name, ext = os.path.splitext(upload.filename)
@@ -41,7 +41,7 @@ def uploadInformation():
 
 @route('/keryx/uploadPrivateKey', method='POST')
 def uploadPrivateKey():
-    print datetime.now(), "PRIVATE KEY UPLOAD"
+    logging.warning( str(datetime.now())+" PRIVATE KEY UPLOAD")
     try:
         upload = request.files.get('file')
         name, ext = os.path.splitext(upload.filename)
@@ -54,7 +54,7 @@ def uploadPrivateKey():
 
 @route('/keryx/uploadAudioFile', method='POST')
 def uploadWav():
-    print datetime.now(), "AUDIO UPLOAD"
+    logging.warning(str(datetime.now())+" AUDIO UPLOAD")
     try:
         upload = request.files.get('file')
         name, ext = os.path.splitext(upload.filename)
@@ -70,7 +70,7 @@ def uploadWav():
 @route('/keryx/downloadKey')
 def keyDownload():
     try:
-        print datetime.now(), "KEY DOWNLOAD SERVICE"
+        logging.warning( str(datetime.now())+ " KEY DOWNLOAD SERVICE")
         keyGenerateService()
         return static_file("key.zip", PROJECT_DIRECTORY + "generated/key/")
     except Exception, e:
@@ -79,7 +79,7 @@ def keyDownload():
 @route('/keryx/generateAudio')
 def audioGenerate():
     try:
-        print datetime.now(), "WAVE GENERATE SERVICE"
+        logging.warning( str(datetime.now())+" WAVE GENERATE SERVICE")
         audioGenerateService()
         return static_file("audio.html", root=PROJECT_DIRECTORY)
     except Exception, e:
@@ -88,7 +88,7 @@ def audioGenerate():
 @route('/keryx/downloadAudio')
 def audioDownload():
     try:
-        print datetime.now(), "WAVE DOWNLOAD SERVICE"
+        logging.warning( str(datetime.now())+" WAVE DOWNLOAD SERVICE")
         return static_file("audio.wav", PROJECT_DIRECTORY + "generated/wav/")
     except Exception, e:
         return str(e)
@@ -96,7 +96,7 @@ def audioDownload():
 @route('/keryx/generateImage')
 def audioGenerate():
     try:
-        print datetime.now(), "IMAGE GENERATE SERVICE"
+        logging.warning( str(datetime.now())+" IMAGE GENERATE SERVICE")
         imageGenerateService()
         return static_file("image.html", root=PROJECT_DIRECTORY)
     except Exception, e:
@@ -105,7 +105,7 @@ def audioGenerate():
 @route('/keryx/downloadImage')
 def imageDownload():
     try:
-        print datetime.now(), "IMAGE DOWNLOAD SERVICE"
+        logging.warning( str(datetime.now())+ " IMAGE DOWNLOAD SERVICE")
         return static_file("image.png", PROJECT_DIRECTORY + "generated/image/")
     except Exception, e:
         return str(e)
@@ -114,6 +114,7 @@ def imageDownload():
 
 @get('/keryx/cleanup')
 def cleanup():
+    logging.warning(str(datetime.now())+" System Cleanup")
     directories = [PROJECT_DIRECTORY + "generated/key/",
                PROJECT_DIRECTORY + "generated/image/",
                PROJECT_DIRECTORY + "generated/wav/",
@@ -129,11 +130,18 @@ def cleanup():
 
 @get('/keryx/viewLogs')
 def log():
+    logging.warning( str(datetime.now())+" Log files requested")
     os.chdir(HOME_DIRECTORY)
-    logger = os.popen("cat nohup.out", "r")
-    logs = logger.read()
-    logger.close()
-    return logs
+    with open("nohup.out", "r") as logger:
+        logs = logger.read()
+    os.chdir(PROJECT_DIRECTORY)
+    with open("log.html", "w") as log:
+        log.write("<head><title>KERYX MESSAGING SYSTEM</title></head><body><h1>LOG FILES TILL %s</h1><br/><hr/><br/>" % (str(str(datetime.now()))))
+        allLogs = logs.split('\n')
+        for eachLog in allLogs:
+            log.write(eachLog + "<br/>")
+        log.write("</body>")
+    return static_file("log.html", root=PROJECT_DIRECTORY)
 
 ########################################################################################################################
 

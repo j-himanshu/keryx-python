@@ -40,8 +40,8 @@ def stegAnalysis(inputFile):
 ########################################################################################################################
 
 def decryptMessage():
-    print datetime.now(), "CALLING STEGANALYSIS"
+    logging.warning( datetime.now()+" CALLING STEGANALYSIS")
     stegAnalysis(AUDIO_FILE_UPLOADED)
-    print datetime.now(), "steganalysis finished | CALLING ECC DECRYPTION"
+    logging.warning( datetime.now()+" steganalysis finished | CALLING ECC DECRYPTION")
     eccDecryption()
-    print datetime.now(), "decryption finished"
+    logging.warning( datetime.now()+" decryption finished")

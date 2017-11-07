@@ -6,4 +6,4 @@ def getKey():
     os.system("javac com/keryx/ecc/*.java -cp \"%s*:./\"" % (JAR_DIRECTORY))
     os.system("java -cp \"%s*:./\" %s %s %s" % (JAR_DIRECTORY, JAVA_KEY_GENERATE_CLASS, PUBLIC_KEY, PRIVATE_KEY))
     os.system("zip %s %sgenerated/key/*" % (ZIP_FILE, PROJECT_DIRECTORY))
-    print datetime.now(), "KEYS GENERATED"
+    logging.warning( str(datetime.now())+ " KEYS GENERATED")

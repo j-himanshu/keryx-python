@@ -40,8 +40,8 @@ def audioStegnography(inputFile, baseWave, outputWave):
     audioInput = wave.open(baseWave, "r")
     props = audioInput.getparams()
     capacity = props[3]/4
-    print "FILE SIZE : ", size, "bytes", inputFile
-    print "WAVE CAPACITY : ", capacity, "bytes", baseWave
+    logging.warning( "FILE SIZE : %d bytes | File : %s"% (size, inputFile))
+    logging.warning( "WAVE CAPACITY : %d bytes | File : %s"%(capacity, baseWave))
     if size > capacity:
         raise Exception("BASE NOT LONG ENOUGH ERROR")
     oldFrames = audioInput.readframes(props[3])
@@ -81,17 +81,17 @@ def audioStegnography(inputFile, baseWave, outputWave):
 ########################################################################################################################
 
 def generateWave():
-    print datetime.now(), "CALLING ENCRYPTION"
+    logging.warning( str(datetime.now())+ " CALLING ENCRYPTION")
     eccEncryption()
-    print datetime.now(), "encryption finished | CALLING STEGANOGRAPHY"
+    logging.warning( str(datetime.now())+ " encryption finished | CALLING STEGANOGRAPHY")
     os.chdir(INPUT_AUDIO_DIRECTORY)
     files = os.listdir('.')
     for file in files:
         try:
             audioStegnography(ENCRYPTED_IMAGE_TXT, file, AUDIO_FILE)
-            break;
+            break
         except Exception, e:
             if str(e) != "BASE NOT LONG ENOUGH ERROR":
                 raise Exception(str(e) + " : ", file)
 
-    print datetime.now(), "steganography finished"
+    logging.warning( str(datetime.now())+ " steganography finished")

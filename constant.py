@@ -1,5 +1,6 @@
 import os
 import random
+import logging
 from datetime import *
 
 HOME_DIRECTORY = "/Users/hs/"
@@ -100,7 +101,3 @@ C = 240
 N_PROC = 32
 
 EOF = [BINARY[A], BINARY[B], BINARY[C]]
-
-def getRandomFile(path):
-    files = os.listdir(path)
-    return path + files[int(random.random()*10**10) % len(files)]
